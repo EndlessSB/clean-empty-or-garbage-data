@@ -69,7 +69,10 @@ def get_files(input_path):
 
 def delete_files(files):
     for file in files:
-        os.remove(file)
+        try:
+            os.remove(file)
+        except Exception as e:
+            print(f"[Error] A File's Deletion Failed: {e}")
 
 if __name__ == "__main__":
     print("[NOTICE] This currently only supports text file formats.")
