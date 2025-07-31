@@ -1,6 +1,7 @@
 import os
 import sys
 
+debug = False
 
 def is_junk_file(file_path):
     try:
@@ -50,14 +51,18 @@ def get_files(input_path):
                 file_path = os.path.join(root, filename)
                 try:
                     if is_junk_file(file_path):
+                        if debug == True:
+                            print(f"[Debug] New junk File found: {file_path}")
                         junk_files.append(file_path)
                     else:
+                        if debug == True:
+                            print(f"[Debug] Non Junk File found: {file_path}")
                         good_files.append(file_path)
                 except Exception as e:
                     # If file can't be read, consider it junk
                     junk_files.append(file_path)
     else:
-        print(f"Error: {input_path} is neither a file nor a directory")
+        print(f"[Error] {input_path} is neither a file nor a directory")
         sys.exit(1)
 
     return good_files, junk_files
@@ -67,22 +72,26 @@ def delete_files(files):
         os.remove(file)
 
 if __name__ == "__main__":
+    print("[NOTICE] This currently only supports text file formats.")
     if len(sys.argv) < 2:
         print("Usage: python main.py <input_path>")
         sys.exit(1)
 
     input_path = sys.argv[1]
     if not os.path.exists(input_path):
-        print(f"Error: Input path {input_path} does not exist")
+        print(f"[Error] Input path {input_path} does not exist")
         sys.exit(1)
 
+    if sys.argv[2]:
+        if sys.argv[2] == "--debug":
+            debug = True
     good_files, junk_files = get_files(input_path)
 
-    print(f"Found {len(good_files)} good files and {len(junk_files)} junk files")
+    print(f"[Info] Found {len(good_files)} good files and {len(junk_files)} junk files")
 
-    delete = input("Do you want to delete the junk files? (y/n): ").lower()
+    delete = input("[Input] Do you want to delete the junk files? (y/n): ").lower()
     if delete == "y":
         delete_files(junk_files)
-        print("Junk files deleted")
+        print(f"[Info] Junk files deleted: {len(junk_files)}")
     else:
-        print("Junk files not deleted")
+        print("[Info] Junk files not deleted")
